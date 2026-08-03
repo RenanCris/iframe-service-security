@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambiente Pai (Host)</title>
+    <script src="../dist/index.global.js"></script>
+    <style>
+        /* Variáveis de Cores e Estilos */
+        :root {
+            --bg-principal: #f8fafc;
+            --bg-card: #ffffff;
+            --texto-principal: #1e293b;
+            --texto-secundario: #64748b;
+            --cor-primaria: #2563eb;
+            --cor-primaria-hover: #1d4ed8;
+            --borda: #e2e8f0;
+            --sucesso: #10b981;
+            --erro: #ef4444;
+        }
+
+        /* Reset e Configurações Gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--texto-principal);
+            line-height: 1.5;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container Principal (Card) */
+        .container {
+            background: var(--bg-card);
+            max-width: 800px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--borda);
+        }
+
+        /* Cabeçalho */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--borda);
+            padding-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            color: var(--texto-principal);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--texto-secundario);
+            font-weight: 500;
+        }
+
+        /* Área de Ações e Controles */
+        .controles {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        button {
+            background-color: var(--cor-primaria);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--cor-primaria-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Bloco de Resultado / Terminal */
+        #resultado {
+            background-color: #0f172a;
+            color: #38bdf8;
+            padding: 1.25rem;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            min-height: 60px;
+            overflow-x: auto;
+            border-left: 4px solid var(--cor-primaria);
+            white-space: pre-wrap;
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        /* Classes utilitárias para mudar o feedback visual via JS se desejado */
+        #resultado.erro {
+            border-left-color: var(--erro);
+            color: #fca5a5;
+        }
+
+        #resultado.sucesso {
+            border-left-color: var(--sucesso);
+            color: #86efac;
+        }
+
+        /* Iframe Customizado */
+        iframe {
+            width: 100%;
+            height: 250px;
+            border: 2px dashed var(--borda);
+            border-radius: 12px;
+            background: #ffffff;
+            transition: border-color 0.3s ease;
+        }
+
+        iframe:hover {
+            border-color: var(--cor-primaria);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Exemplo iframe-service-security</h1>
+            <h2>Página Pai (Porta 3000)</h2>
+        </header>
+
+        <main class="controles">
+            <button onclick="enviarPedido()">Solicitar Dados ao Filho (Async)</button>
+            <div id="resultado">Console: Aguardando interações...</div>
+        </main>
+
+        <!-- Iframe configurado com as diretivas do Sandbox obrigatórias -->
+        <iframe id="meuIframe" src="http://localhost:4000" sandbox="allow-scripts allow-same-origin"
+            allow="camera 'none'; microphone 'none'; geolocation 'none'; payment 'none'">
+        </iframe>
+    </div>
+
+    <script>
+        let comunicadorPai;
+        const objResultado = document.getElementById('resultado');
+
+        // Aguarda a janela carregar para obter o elemento do DOM
+        window.addEventListener('DOMContentLoaded', () => {
+            comunicadorPai = IframeServiceSecurity.criarInstanciaPai({
+                iframeElement: document.getElementById('meuIframe'),
+                urlIframeFilho: 'http://localhost:4000',
+                onNotification: (acao, payload) => {
+                    objResultado.className = ""; // limpa estados de erro/sucesso antigos
+                    objResultado.innerText = `[Notificação Espontânea]\nAção: ${acao}\nPayload: ${JSON.stringify(payload, null, 2)}`;
+                }
+            });
+        });
+
+        async function enviarPedido() {
+            objResultado.className = "";
+            objResultado.innerText = "Aguardando resposta do filho...";
+
+            try {
+                const resposta = await comunicadorPai.requisitar('obterPerfil', { id: 7 });
+                objResultado.classList.add("sucesso");
+                objResultado.innerText = `[Resposta Assíncrona Recebida]:\n${JSON.stringify(resposta, null, 2)}`;
+            } catch (erro) {
+                objResultado.classList.add("erro");
+                objResultado.innerText = `[Erro]: ${erro.message}`;
+            }
+        }
+    </script>
+</body>
+
+</html>
