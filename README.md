@@ -1,13 +1,8 @@
 # IframeServiceSecurity 🔒
 
-![GitHub Release](https://shields.io)
-![Snyk Vulnerabilities](https://shields.io)
-![GitHub Dependabot Alerts](https://shields.io)
-![License](https://shields.io)
-![Security Scan Status](https://github.com)
-![ESLint](https://shields.io)
-
 Uma solução leve, agnóstica e de alta segurança para comunicação bidirecional e assíncrona entre aplicações **Pai (Host)** e **Iframes Filhos (Embedded)** rodando em diferentes portas ou domínios (`Cross-Origin`).
+
+![Examplo](./captura.gif)
 
 ## 💡 A Proposta
 Mecanismos tradicionais baseados puramente em `window.postMessage` sofrem com vulnerabilidades de interceptação por scripts terceiros e complexidade de concorrência assíncrona. 
