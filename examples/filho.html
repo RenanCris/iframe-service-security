@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe Filho</title>
+    <!-- Carrega a biblioteca disponibilizada pela rota do servidor -->
+    <script src="/lib.js"></script>
+    <style>
+        /* Variáveis de Cores (Alinhadas com o ambiente Pai) */
+        :root {
+            --bg-filho: #ffffff;
+            --texto-principal: #1e293b;
+            --texto-secundario: #64748b;
+            --cor-secundaria: #475569;
+            --cor-secundaria-hover: #334155;
+            --borda: #f1f5f9;
+        }
+
+        /* Reset e Configurações Gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-filho);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--texto-principal);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Título do Ambiente */
+        h3 {
+            font-size: 1rem;
+            color: var(--texto-secundario);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Indicador visual de conexão interna */
+        h3::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            /* Verde ativo */
+            border-radius: 50%;
+        }
+
+        /* Botão de Notificação */
+        button {
+            background-color: var(--cor-secundaria);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--cor-secundaria-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+
+<body>
+    <h3>Iframe Filho (Porta 4000)</h3>
+    <button onclick="notificarPaiVoluntariamente()">Enviar Notificação Unilateral ao Pai</button>
+
+    <script>
+        const comunicadorFilho = IframeServiceSecurity.criarInstanciaFilho({
+            origensPermitidas: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+            onReceiveRequest: async (acao, payload) => {
+                if (acao === 'obterPerfil') {
+                    await new Promise(r => setTimeout(r, 500));
+                    return { nome: "Renan CCN", id: payload.id };
+                }
+                throw new Error("Ação não suportada");
+            }
+        });
+
+        function notificarPaiVoluntariamente() {
+            comunicadorFilho.notificarPai('Notificação do filho', { status: 'sucesso' });
+        }
+    </script>
+</body>
+
+</html>

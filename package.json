@@ -1,0 +1,48 @@
+{
+    "name": "iframe-service-security",
+    "version": "1.0.0",
+    "description": "Comunicação cross-origin segura e assíncrona entre janelas e iframes baseada em MessageChannel, Nonce e Heartbeat.",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+    },
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "scripts": {
+        "build": "tsup index.js --format cjs,esm,iife --global-name IframeServiceSecurity --clean --dts --minify",
+        "test": "vitest run",
+        "examples": "node examples/servidor.js",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix"
+    },
+    "keywords": [
+        "iframe",
+        "security",
+        "messagechannel",
+        "postmessage",
+        "cross-origin",
+        "nonce",
+        "heartbeat"
+    ],
+    "author": "Renan Cris Nunes",
+    "license": "MIT",
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "eslint": "^10.8.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.6",
+        "globals": "^17.8.0",
+        "happy-dom": "^20.11.1",
+        "tsup": "^8.5.1",
+        "typescript": "5.7.3",
+        "vitest": "^4.1.10"
+    },
+    "overrides": {
+        "typescript": "$typescript"
+    }
+}
