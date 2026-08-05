@@ -175,6 +175,8 @@
             comunicadorPai = IframeServiceSecurity.criarInstanciaPai({
                 iframeElement: document.getElementById('meuIframe'),
                 urlIframeFilho: 'http://localhost:4000',
+                timeoutHandshakeMs: 3000,
+                timeoutRequisicaoMs: 8000,
                 onNotification: (acao, payload) => {
                     objResultado.className = ""; // limpa estados de erro/sucesso antigos
                     objResultado.innerText = `[Notificação Espontânea]\nAção: ${acao}\nPayload: ${JSON.stringify(payload, null, 2)}`;
@@ -187,6 +189,7 @@
             objResultado.innerText = "Aguardando resposta do filho...";
 
             try {
+                await comunicadorPai.aguardarConexao();
                 const resposta = await comunicadorPai.requisitar('obterPerfil', { id: 7 });
                 objResultado.classList.add("sucesso");
                 objResultado.innerText = `[Resposta Assíncrona Recebida]:\n${JSON.stringify(resposta, null, 2)}`;

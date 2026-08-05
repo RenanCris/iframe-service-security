@@ -7,7 +7,7 @@ Uma solução leve, agnóstica e de alta segurança para comunicação bidirecio
 ## 💡 A Proposta
 Mecanismos tradicionais baseados puramente em `window.postMessage` sofrem com vulnerabilidades de interceptação por scripts terceiros e complexidade de concorrência assíncrona. 
 
-`IframeServiceSecurity` resolve isso combinando 4 camadas de proteção de nível corporativo:
+`IframeServiceSecurity` resolve isso combinando camadas de proteção de nível corporativo:
 1. **Isolamento de Processo Nativo:** Utiliza `MessageChannel` (`port1` e `port2`) transferindo a propriedade de memória da conexão. Nenhuma outra extensão ou script global consegue interceptar as mensagens.
 2. **Protocolo Requisição-Resposta Assíncrono:** Mapeamento de callbacks via **Nonces (UUIDs únicos)**. Permite o uso nativo de `async/await` e impede ataques de Replay.
 3. **Constantes Fortemente Tipadas:** Centralização do catálogo de mensagens em constantes estáticas internas, mitigando falhas humanas por digitação.
@@ -53,6 +53,8 @@ const IframeServiceSecurity = require('iframe-service-security');
 const comunicadorPai = IframeServiceSecurity.criarInstanciaPai({
     iframeElement: document.getElementById('meuIframe'),
     urlIframeFilho: 'http://localhost:4000',
+    timeoutHandshakeMs: 3000,
+    timeoutRequisicaoMs: 8000,
     onNotification: (acao, payload) => {
         objResultado.className = ""; // limpa estados de erro/sucesso antigos
         objResultado.innerText = `[Notificação Espontânea]\nAção: ${acao}\nPayload: ${JSON.stringify(payload, null, 2)}`;
