@@ -24,6 +24,8 @@ export const PROTOCOLO = {
  * @property {Function} onNotification - Callback para notificações unilaterais do filho
  *   @param {string} onNotification.acao - Nome da ação/notificação
  *   @param {Object} onNotification.payload - Dados enviados pelo filho
+ * @param {number} [opcoes.timeoutHandshakeMs=5000] - Timeout para o handshake inicial (ms)
+ * @param {number} [opcoes.timeoutRequisicaoMs=10000] - Timeout para cada requisição (ms)
  */
 
 /**
