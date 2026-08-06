@@ -1,11 +1,10 @@
 {
     "name": "iframe-service-security",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Comunicação cross-origin segura e assíncrona entre janelas e iframes baseada em MessageChannel, Nonce e Heartbeat.",
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
-    "type": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/RenanCris/iframe-service-security.git"
